@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
+import { setBackendTokenCookie } from "@/lib/session";
 
 export default function JoinPage() {
   const [code, setCode] = useState("");
@@ -17,7 +18,8 @@ export default function JoinPage() {
         .post("join", { json: { code, pseudonym: name } })
         .json<{ token: string }>();
       localStorage.setItem("litbuddyToken", res.token);
-      router.push("/home");
+      await setBackendTokenCookie(res.token);
+      router.push("/onboarding");
     } catch {
       setError("Invalid or expired code");
     }
